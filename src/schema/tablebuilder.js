@@ -69,6 +69,53 @@ _.each(specialMethods, function(method) {
   };
 });
 
+// AWS Redshift specific methods
+TableBuilder.prototype.diststyle = function(style, key) {
+  if (this._method === 'alter') {
+    helpers.warn('Knex does not support altering the diststyle outside of the create table, please use knex.raw statement.');
+  }
+
+  this._single.diststyle = `diststyle ${style}`;
+  if (style.toLowerCase() !== 'all') {
+    this._single.diststyle += `(${key})`;
+  }
+}
+TableBuilder.prototype.sortkey = function(sortType, ...keys) {
+  if (this._method === 'alter') {
+    helpers.warn('Knex does not support altering the sortkey outside of the create table, please use knex.raw statement.');
+  }
+
+  if (keys.length < 1) {
+    this._single.sortkey = `sortkey(${sortType})`;
+  } else {
+    this._single.sortkey = `${sortType} sortkey(${keys.join(', ')})`;
+  }
+}
+
+
+// AWS Redshift specific methods
+TableBuilder.prototype.diststyle = function(style, key) {
+  if (this._method === 'alter') {
+    helpers.warn('Knex does not support altering the diststyle outside of the create table, please use knex.raw statement.');
+  }
+
+  this._single.diststyle = `diststyle ${style}`;
+  if (style.toLowerCase() !== 'all') {
+    this._single.diststyle += `(${key})`;
+  }
+}
+TableBuilder.prototype.sortkey = function(sortType, ...keys) {
+  if (this._method === 'alter') {
+    helpers.warn('Knex does not support altering the sortkey outside of the create table, please use knex.raw statement.');
+  }
+
+  if (keys.length < 1) {
+    this._single.sortkey = `sortkey(${sortType})`;
+  } else {
+    this._single.sortkey = `${sortType} sortkey(${keys.join(', ')})`;
+  }
+}
+
 // Each of the column types that we can add, we create a new ColumnBuilder
 // instance and push it onto the statements array.
 var columnTypes = [
@@ -128,6 +175,7 @@ var columnTypes = [
   'string',
   'timestamps',
   'json',
+  'jsonb',
   'uuid',
   'enu',
   'specificType'
